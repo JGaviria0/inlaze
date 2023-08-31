@@ -16,6 +16,10 @@ export class AuthService {
     ) { }
 
   async register( userObject: ResgisterAuthDto){
+    const rolecheck = this.userRepo.findOne({
+      where: { email: userObject.email }
+    }); 
+    if(rolecheck) throw new HttpException('USER_ALREADY_EXIST', HttpStatus.NOT_ACCEPTABLE)
     const { password } = userObject; 
     const hashpassword = await hash(password, 10); 
     userObject = {...userObject, password: hashpassword}; 
@@ -27,10 +31,10 @@ export class AuthService {
     const findUser = await this.userRepo.findOne({
       where: { email: email}
     })
-    if(!findUser) throw new HttpException('USER_NOT_FOUND', 404);
+    if(!findUser) throw new HttpException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
     
     const checkPassword = await compare(password, findUser.password); 
-    if(!checkPassword) throw new HttpException('PASSWORD_INCORRECT', 403); 
+    if(!checkPassword) throw new HttpException('PASSWORD_INCORRECT', HttpStatus.FORBIDDEN); 
 
     const payload = { id: findUser.id, name: findUser.full_name}; 
     const token = this.jwtService.sign(payload);
