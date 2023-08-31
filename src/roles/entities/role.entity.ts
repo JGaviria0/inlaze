@@ -5,7 +5,7 @@ export class Role {
     id: number; 
 
     @Column()
-    full_name: string;
+    name: string;
 
     @Column()
     is_deleted: boolean = false; 
