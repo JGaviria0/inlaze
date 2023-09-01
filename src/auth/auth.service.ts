@@ -3,7 +3,7 @@ import { LoginAuthDto } from './dto/login-auth.dto';
 import { ResgisterAuthDto } from './dto/register-auth.dto';
 import { hash, compare } from 'bcrypt'
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/users/entities/user.entity';
+import { User } from './../users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 
@@ -16,7 +16,7 @@ export class AuthService {
     ) { }
 
   async register( userObject: ResgisterAuthDto){
-    const rolecheck = this.userRepo.findOne({
+    const  rolecheck = await this.userRepo.findOne({
       where: { email: userObject.email }
     }); 
     if(rolecheck) throw new HttpException('USER_ALREADY_EXIST', HttpStatus.NOT_ACCEPTABLE)
